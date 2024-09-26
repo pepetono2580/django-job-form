@@ -30,3 +30,6 @@ def index(request):
             # return HttpResponseRedirect(reverse("templates/index.html"))
     return render(request, "index.html")
 
+
+def about(request):
+    return render(request, "about.html")
