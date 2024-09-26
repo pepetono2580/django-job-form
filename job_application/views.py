@@ -1,5 +1,10 @@
+from django.http import HttpResponseRedirect
+from django.shortcuts import reverse
 from django.shortcuts import render
 from .forms import ApplicationForm #the dot at the beginning is because we want to import from the same directory, not the root directory
+from .models import Form
+from django.contrib import messages
+from django.core.mail import EmailMessage
 
 
 def index(request):
@@ -12,5 +17,16 @@ def index(request):
             email = form.cleaned_data["email"]
             date = form.cleaned_data["date"]
             occupation = form.cleaned_data["occupation"]
-            print(first_name)
+
+            Form.objects.create(first_name=first_name, last_name=last_name,
+                                email=email, date=date, occupation=occupation)
+
+            message_body = f"A new job application was submitted. Thank you, {first_name}."
+            email_message = EmailMessage("Form submission confirmation", message_body, to=[email])
+            email_message.send()
+
+            messages.success(request, "Form submitted successfully")
+
+            # return HttpResponseRedirect(reverse("templates/index.html"))
     return render(request, "index.html")
+
